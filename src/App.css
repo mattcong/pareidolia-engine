@@ -1,0 +1,9 @@
+.page__content {
+  padding: 3rem 2rem;
+  display: flex;
+  max-width: 1260;
+  margin: 0 auto;
+  padding: 20;
+  gap: 20;
+  min-height: calc(100vh - 47px);
+}

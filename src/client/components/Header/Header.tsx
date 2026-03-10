@@ -1,4 +1,4 @@
-import type { ServerStatus } from "../../model"
+import type { ServerStatus } from "../../../model"
 import "./Header.css"
 
 const ProviderStatusIndicator = ({ server }: { server: ServerStatus | null }) => {
@@ -37,7 +37,7 @@ export const Header = ({ hasRegions, hasImage, server, onReset }: HeaderProps) =
       <ProcessingStatusIndicator hasRegions={hasRegions} />
       <div className="header__controls">
         <ProviderStatusIndicator server={server} />
-        {!hasImage && <button onClick={onReset}>RESET</button>}
+        {hasImage && <button onClick={onReset}>RESET</button>}
       </div>
     </div>
   )
