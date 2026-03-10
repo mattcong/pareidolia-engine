@@ -1,0 +1,5 @@
+:root {
+  --indicator-connected: #66ff99;
+  --indicator-disconnected: #ff3366;
+  --indicator-inactive: #1a1a1f;
+}

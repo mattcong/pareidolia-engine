@@ -1,0 +1,39 @@
+.header {
+  border-bottom: 1px solid black;
+  padding: 13px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9;
+  width: 100%;
+}
+
+.header__controls {
+  display: flex;
+  gap: 16px;
+}
+
+.header__provider-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header__status-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.header__status-indicator--connected {
+  background: var(--indicator-connected);
+}
+
+.header__status-indicator--disconnected {
+  background: var(--indicator-disconnected);
+}
+
+.header__status-indicator--inactive {
+  background: var(--indicator-inactive);
+}
