@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react"
-import "./App.css"
-import { Header } from "./client/components/Header/Header"
-import { getStatus } from "./client/query/getStatus"
-import type { ServerStatus } from "./model"
-import { UploadImage } from "./client/components/UploadImage/UploadImage"
-import { Image } from "./client/components/Image/Image"
+import "./styles/App.css"
+import { Header } from "./components/Header/Header"
+import { getStatus } from "./query/getStatus"
+import type { ServerStatus } from "../model"
+import { UploadImage } from "./components/UploadImage/UploadImage"
+import { Image } from "./components/Image/Image"
 
 type Region = {
   id: number
