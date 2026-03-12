@@ -1,31 +1,33 @@
-import { useEffect, useRef, useState } from "react"
 import "./styles/App.css"
+import { useEffect, useRef, useState } from "react"
 import { Header } from "./components/Header/Header"
 import { getStatus } from "./query/getStatus"
 import type { ServerStatus } from "../model"
 import { UploadImage } from "./components/UploadImage/UploadImage"
 import { Image } from "./components/Image/Image"
-
-type Region = {
-  id: number
-  label: string
-  loading: boolean
-}
+import type { ImageDimensions, Region } from "./types"
+import { useDisplayDimensions } from "./hooks/useDisplayDimensions"
 
 function App() {
-  const [regions, setRegions] = useState<Region[]>([])
   const [image, setImage] = useState<string | null>(null)
+  const [imageDimensions, setImageDimensions] = useState<ImageDimensions | null>(null)
+  const [regions, setRegions] = useState<Region[]>([])
   const [serverStatus, setServerStatus] = useState<ServerStatus | null>(null)
 
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  const displayDimensions = useDisplayDimensions(containerRef, imageDimensions)
 
   useEffect(() => {
     getStatus().then(setServerStatus)
   }, [])
 
-  const onReset = () => {
+  const handleReset = () => {
     setImage(null)
     setRegions([])
+    setImageDimensions(null)
   }
 
   const handleFile = (file: File) => {
@@ -40,11 +42,14 @@ function App() {
         hasRegions={regions.length > 0}
         hasImage={!!image}
         server={serverStatus}
-        onReset={onReset}
+        onReset={handleReset}
       />
       <div className="page__content">
         {image ? (
-          <Image imageRef={imageRef} image={image} />
+          <>
+            <Image imageRef={imageRef} image={image} />
+            <canvas ref={canvasRef} style={{ display: "none" }} />
+          </>
         ) : (
           <UploadImage handleFile={handleFile} />
         )}
