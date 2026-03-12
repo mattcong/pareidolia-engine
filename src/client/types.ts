@@ -9,8 +9,18 @@ export type DisplayDimensions = {
   scale: number // displayWidth / nativeWidth
 }
 
-export type Region = {
+export type BoundingBox = {
+  x: number
+  y: number
+  w: number
+  h: number
+  area: number
+}
+
+export type Region = BoundingBox & {
   id: number
   label: string
+  description: string | null
   loading: boolean
+  color: string
 }
