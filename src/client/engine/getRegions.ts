@@ -3,6 +3,7 @@ import { sobelEdgeDetect, adaptiveThreshold, dilateBinaryMask } from "./edgeDete
 import { extractBoundingBoxes } from "./extractBoundingBoxes"
 import { gaussianBlur } from "./gaussianBlur"
 import { labelConnectedComponents } from "./labelComponents"
+import { nonMaximumSuppression } from "./postProcessing"
 import { toGrayscale } from "./toGrayscale"
 
 export const getRegions = (imageData: ImageData): BoundingBox[] => {
@@ -16,7 +17,7 @@ export const getRegions = (imageData: ImageData): BoundingBox[] => {
   const { labelMap, componentCount } = labelConnectedComponents(dilatedEdges, width, height)
   const candidateBoxes = extractBoundingBoxes(labelMap, componentCount, width, height)
 
-  return candidateBoxes
+  return nonMaximumSuppression(candidateBoxes)
 }
 
 export const cropRegion = (
