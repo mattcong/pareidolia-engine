@@ -23,3 +23,13 @@ export type DescribeResponse = {
   model: string
   latency: number
 }
+
+export type ApiDescribeRequest = {
+  regions: { id: number; image: string }[]
+}
+
+export type ApiDescribeResponse = {
+  results: { id: number; description: string }[]
+  provider: string
+  model: string
+}
