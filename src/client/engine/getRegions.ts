@@ -18,3 +18,24 @@ export const getRegions = (imageData: ImageData): BoundingBox[] => {
 
   return candidateBoxes
 }
+
+export const cropRegion = (
+  sourceCanvas: HTMLCanvasElement,
+  box: BoundingBox,
+  padding = 4,
+): string => {
+  const cropX = Math.max(0, box.x - padding)
+  const cropY = Math.max(0, box.y - padding)
+  const cropWidth = Math.min(sourceCanvas.width - cropX, box.w + padding * 2)
+  const cropHeight = Math.min(sourceCanvas.height - cropY, box.h + padding * 2)
+
+  const cropCanvas = document.createElement("canvas")
+  cropCanvas.width = cropWidth
+  cropCanvas.height = cropHeight
+  cropCanvas
+    .getContext("2d")!
+    .drawImage(sourceCanvas, cropX, cropY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight)
+
+  const dataUrl = cropCanvas.toDataURL("image/jpeg", 0.85)
+  return dataUrl.split(",")[1]
+}

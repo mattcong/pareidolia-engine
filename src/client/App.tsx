@@ -8,9 +8,10 @@ import { Image } from "./components/Image/Image"
 import type { ImageDimensions, Region } from "./types"
 import { useDisplayDimensions } from "./hooks/useDisplayDimensions"
 import { Overlay } from "./components/Overlay/Overlay"
-import { getRegions } from "./engine/getRegions"
+import { cropRegion, getRegions } from "./engine/getRegions"
 import { placeholderLabel } from "./engine/placeholderLabel"
 import { REGION_COLORS } from "./constants"
+import { describeRegions } from "./query/describeRegions"
 
 function App() {
   const [image, setImage] = useState<string | null>(null)
@@ -61,6 +62,34 @@ function App() {
     setRegions(initial)
     setImageDimensions({ width, height })
     setProcessing(false)
+
+    const status = await getStatus()
+    setServerStatus(status)
+
+    if (status.connected && initial.length > 0) {
+      try {
+        const crops = initial.map((region) => ({
+          id: region.id,
+          image: cropRegion(canvas, region),
+        }))
+        const response = await describeRegions(crops)
+        setRegions((prev) =>
+          prev.map((region) => {
+            const match = response.results.find((res) => res.id === region.id)
+            return {
+              ...region,
+              description: match?.description ?? null,
+              loading: false,
+            }
+          }),
+        )
+      } catch (e) {
+        console.error("Model labeling failed:", e)
+        setRegions((prev) => prev.map((region) => ({ ...region, loading: false })))
+      }
+    } else {
+      setRegions((prev) => prev.map((region) => ({ ...region, loading: false })))
+    }
   }, [])
 
   useEffect(() => {
