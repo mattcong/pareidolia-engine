@@ -20,21 +20,36 @@ const config = loadConfig()
 const provider = createProvider(config)
 const app = express()
 
-app.use(cors())
+app.use(cors({ origin: `http://localhost:5173` }))
 app.use(express.json({ limit: "50mb" }))
 
 let active = 0
 const MAX_CONCURRENT = 3
+const waiting: (() => void)[] = []
+
+const waitForTurn = (): Promise<void> => {
+  if (active < MAX_CONCURRENT) {
+    active++
+    return Promise.resolve()
+  }
+  return new Promise<void>((resolve) => waiting.push(resolve))
+}
+
+const finishTurn = (): void => {
+  const next = waiting.shift()
+  if (next) {
+    next()
+  } else {
+    active--
+  }
+}
 
 const withLimit = async <T>(fn: () => Promise<T>): Promise<T> => {
-  while (active >= MAX_CONCURRENT) {
-    await new Promise((r) => setTimeout(r, 100))
-  }
-  active++
+  await waitForTurn()
   try {
     return await fn()
   } finally {
-    active--
+    finishTurn()
   }
 }
 
@@ -95,7 +110,7 @@ app.post("/api/describe", async (req, res) => {
 const start = async () => {
   console.log(`provider: ${config.provider}`)
   console.log(`model: ${config.model}`)
-  console.log(`api key: ${config.apiKey ? config.apiKey.slice(0, 12) + "…" : "(none)"}`)
+  console.log(`api key: ${config.apiKey ? "…" + config.apiKey.slice(-4) : "(none)"}`)
 
   app.listen(config.port, () => {
     console.log(`listening on http://localhost:${config.port}`)
