@@ -37,12 +37,22 @@ function App() {
   }, [])
 
   const detect = useCallback(async () => {
+    setProcessing(true)
+
     const img = imageRef.current
     const canvas = canvasRef.current
-    if (!img || !canvas) return
+    if (!img || !canvas) {
+      return
+    }
 
-    setProcessing(true)
     setSelectedRegion(null)
+
+    // Ensure processing overlay is rendered before detection pipeline runs
+    await new Promise<void>((request) =>
+      requestAnimationFrame(() => {
+        return setTimeout(request, 0)
+      }),
+    )
 
     const ctx = canvas.getContext("2d")!
     canvas.width = img.naturalWidth

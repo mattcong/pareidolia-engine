@@ -1,6 +1,7 @@
 .processing-overlay {
   position: absolute;
   inset: 0;
+  height: 420px;
   background: #09090a47;
   display: flex;
   align-items: center;
