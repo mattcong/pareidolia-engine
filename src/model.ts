@@ -11,3 +11,15 @@ export type ServerStatus = {
   model: string | null
   error?: string
 }
+
+export type DescribeRequest = {
+  image: string
+  prompt: string
+}
+
+export type DescribeResponse = {
+  description: string
+  provider: string
+  model: string
+  latency: number
+}
