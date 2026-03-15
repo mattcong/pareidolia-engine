@@ -4,7 +4,6 @@ import { dirname, resolve } from "path"
 import { fileURLToPath } from "url"
 import { loadConfig } from "./config.js"
 import dotenv from "dotenv"
-import { buildUserPrompt } from "./lib/prompt.js"
 import { createProvider } from "./providers/createProvider.js"
 import cors from "cors"
 
@@ -84,7 +83,7 @@ app.post("/api/describe", async (req, res) => {
           try {
             const result = await provider.describe({
               image: region.image,
-              prompt: buildUserPrompt(),
+              prompt: "",
             })
             return { id: region.id, description: result.description }
           } catch (e: unknown) {

@@ -5,23 +5,23 @@
   pointer-events: none;
 }
 
-.overlay-box {
+.overlay__box {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 0.4rem;
   box-sizing: border-box;
 }
 
 .overlay__box-label {
-  font-size: 9px;
+  font-size: 0.9rem;
   font-weight: 600;
   line-height: 1.3;
   text-align: center;
   word-break: break-word;
   overflow-wrap: break-word;
-  padding: 2px 5px 3px;
+  padding: 0.2rem 0.4rem 0.3rem;
   background: black;
 }

@@ -1,6 +1,6 @@
 import type { DescribeRequest, DescribeResponse } from "../../model"
 import type { AppConfig, Provider } from "../../types"
-import { SYSTEM_PROMPT } from "../lib/prompt"
+import { ANTHROPIC_SYSTEM_PROMPT, ANTHROPIC_USER_PROMPT } from "../lib/prompt"
 
 export class AnthropicProvider implements Provider {
   readonly name = "anthropic"
@@ -52,7 +52,7 @@ export class AnthropicProvider implements Provider {
       body: JSON.stringify({
         model: this.model,
         max_tokens: 150,
-        system: SYSTEM_PROMPT,
+        system: ANTHROPIC_SYSTEM_PROMPT,
         messages: [
           {
             role: "user",
@@ -65,7 +65,7 @@ export class AnthropicProvider implements Provider {
                   data: req.image,
                 },
               },
-              { type: "text", text: req.prompt },
+              { type: "text", text: req.prompt || ANTHROPIC_USER_PROMPT },
             ],
           },
         ],
