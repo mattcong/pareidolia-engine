@@ -1,6 +1,6 @@
 import type { DescribeRequest, DescribeResponse } from "../../model"
 import type { AppConfig, Provider } from "../../types"
-import { SYSTEM_PROMPT, buildUserPrompt } from "../lib/prompt"
+import { SYSTEM_PROMPT } from "../lib/prompt"
 
 export class AnthropicProvider implements Provider {
   readonly name = "anthropic"
@@ -65,7 +65,7 @@ export class AnthropicProvider implements Provider {
                   data: req.image,
                 },
               },
-              { type: "text", text: req.prompt || buildUserPrompt() },
+              { type: "text", text: req.prompt },
             ],
           },
         ],
