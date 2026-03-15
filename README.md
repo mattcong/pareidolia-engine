@@ -1,73 +1,67 @@
-# React + TypeScript + Vite
+# Pareidolia Engine
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Detects visual forms in images using client-side region proposals and LLM generated descriptions.
 
-Currently, two official plugins are available:
+![pareidolia engine](/docs/pareidolia-engine-detail.png)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Setup
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+npm install
+cp .env.example .env
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Edit `.env`:
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x"
-import reactDom from "eslint-plugin-react-dom"
-
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
 ```
+PROVIDER=[provider]
+API_KEY=[your_api_key] - ignored for ollama
+MODEL=[model] - override default provider model (see below)
+OLLAMA_HOST=http://localhost:[ollama_port] - ollama port
+PORT=[server_port] - server port
+```
+
+### Providers
+
+Currently supported:
+
+| Provider  | `PROVIDER`  | `API_KEY` | Default model              |
+| --------- | ----------- | --------- | -------------------------- |
+| Anthropic | `anthropic` | Required  | `claude-sonnet-4-20250514` |
+| Ollama    | `ollama`    | -         | `llava`                    |
+
+For Ollama, the model must support vision (llava, bakllava, moondream)
+
+## Run
+
+```
+npm run dev
+```
+
+Or to run client and server in separate terminals:
+
+```
+npm run dev:client
+```
+
+```
+npm run dev:server
+```
+
+## Image processing workflow
+
+### Client
+Identifies regions in the image using an edge-based object detection pipeline:
+
+1. Grayscale - convert to brightness-only
+2. Blur - reduce noise
+3. Edge detection - find boundaries where brightness changes sharply (Sobel operator)
+4. Threshold - discard faint edges, keeping only those above the image average
+5. Dilation - thicken remaining edges so nearby fragments merge
+6. Component labeling - group each connected blob of edge pixels into a distinct region
+7. Bounding boxes - fit a rectangle around each region
+8. Non-maximum suppression - where rectangles overlap significantly, keep only the best one
+9. Crop - extract each region as a JPEG
+
+### Server
+Cropped regions are then sent to an LLM vision API which returns a natural language description of the form it sees.
