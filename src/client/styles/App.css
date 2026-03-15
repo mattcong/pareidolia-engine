@@ -1,9 +1,20 @@
 .page__content {
   padding: 3rem 2rem;
   display: flex;
-  max-width: 1260;
+  max-width: 1500px;
   margin: 0 auto;
-  padding: 20;
-  gap: 20;
+  padding: 20px;
+  gap: 20px;
   min-height: calc(100vh - 47px);
+}
+
+.page__content__detection-view {
+  display: flex;
+  flex: 1;
+  gap: 3rem;
+}
+
+.page__content__image-view {
+  position: relative;
+  width: 100%;
 }

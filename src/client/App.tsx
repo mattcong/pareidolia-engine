@@ -12,6 +12,8 @@ import { cropRegion, getRegions } from "./engine/getRegions"
 import { placeholderLabel } from "./engine/placeholderLabel"
 import { REGION_COLORS } from "./constants"
 import { describeRegions } from "./query/describeRegions"
+import { ProcessingOverlay } from "./components/ProcessingOverlay/ProcessingOverlay"
+import { RegionList } from "./components/RegionList/RegionList"
 
 function App() {
   const [image, setImage] = useState<string | null>(null)
@@ -58,7 +60,7 @@ function App() {
       loading: true,
       color: REGION_COLORS[i % REGION_COLORS.length],
     }))
-    console.log(initial)
+
     setRegions(initial)
     setImageDimensions({ width, height })
     setProcessing(false)
@@ -115,44 +117,47 @@ function App() {
     setRegions([])
   }
 
-  useEffect(() => {
-    console.log(processing)
-  }, [processing])
-
   const handleSelectRegion = (id: number) => {
     setSelectedRegion((prev) => (prev === id ? null : id))
   }
 
+  const hasRegions = regions.length > 0
+
   return (
     <>
       <Header
-        hasRegions={regions.length > 0}
+        hasRegions={hasRegions}
         hasImage={!!image}
         server={serverStatus}
         onReset={handleReset}
       />
       <div className="page__content">
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div className="page__content__detection-view">
           {image ? (
-            <div
-              ref={containerRef}
-              style={{
-                position: "relative",
-                width: "100%",
-              }}
-            >
-              <Image imageRef={imageRef} image={image} />
-              <canvas ref={canvasRef} style={{ display: "none" }} />
-              {imageDimensions && displayDimensions && (
-                <Overlay
+            <>
+              <div ref={containerRef} className="page__content__image-view">
+                <Image imageRef={imageRef} image={image} />
+                <canvas ref={canvasRef} style={{ display: "none" }} />
+                {imageDimensions && displayDimensions && (
+                  <Overlay
+                    regions={regions}
+                    displayDimensions={displayDimensions}
+                    activeId={activeId}
+                    onHover={setHoveredRegion}
+                    onSelect={handleSelectRegion}
+                  />
+                )}
+                {processing && <ProcessingOverlay />}
+              </div>
+              {hasRegions && (
+                <RegionList
                   regions={regions}
-                  displayDimensions={displayDimensions}
                   activeId={activeId}
                   onHover={setHoveredRegion}
                   onSelect={handleSelectRegion}
                 />
               )}
-            </div>
+            </>
           ) : (
             <UploadImage handleFile={handleFile} />
           )}
