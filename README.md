@@ -2,7 +2,7 @@
 
 Detects visual forms in images using client-side region proposals and LLM generated descriptions.
 
-![pareidolia engine](/docs/pareidolia-engine-detail.png)
+![pareidolia engine](/docs/pareidolia-engine.png)
 
 ## Setup
 
