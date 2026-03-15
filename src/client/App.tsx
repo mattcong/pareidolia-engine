@@ -106,6 +106,9 @@ function App() {
   }, [image, detect])
 
   const handleReset = () => {
+    if (image) {
+      URL.revokeObjectURL(image)
+    }
     setImage(null)
     setRegions([])
     setImageDimensions(null)
